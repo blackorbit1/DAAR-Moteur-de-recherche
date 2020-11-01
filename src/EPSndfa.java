@@ -68,17 +68,18 @@ public class EPSndfa {
         HashMap<Integer, ArrayList<Couple>> res = new HashMap<>();
 
         System.out.println("tree.root : " + tree.root);
-        
-        if(tree.root >= 0 && tree.root < 256){
+        boolean c1 = (tree.root >= 0 && tree.root < 256);
+        if( c1 || tree.root == DOT){
             ArrayList<Couple> etatInit = new ArrayList<>();
-            for(int i = 0; i < 259; i++) etatInit.add(null);
+            for(int i = 0; i < 260; i++) etatInit.add(null);
             res.put(node_counter++, etatInit);
-            etatInit.set(tree.root, new Couple(node_counter));
+            // gestion du point comme caractere normal a cet etape
+            etatInit.set((c1 ? tree.root : 259), new Couple(node_counter));
                   
             etatInit.set(257, new Couple(1));
             etatInit.set(258, new Couple(0));
             ArrayList<Couple> etatFinal = new ArrayList<>();
-            for(int i = 0; i < 259; i++) etatFinal.add(null);
+            for(int i = 0; i < 260; i++) etatFinal.add(null);
             etatFinal.set(258, new Couple(1));
             etatFinal.set(257, new Couple(0));
             res.put(node_counter++, etatFinal);      
@@ -143,12 +144,12 @@ public class EPSndfa {
 
             
             ArrayList<Couple> etatInit = new ArrayList<>();
-            for(int i = 0; i < 259; i++) etatInit.add(null);               
+            for(int i = 0; i < 260; i++) etatInit.add(null);               
             etatInit.set(257, new Couple(1));
             etatInit.set(258, new Couple(0));
             res.put(node_counter++, etatInit);   
             ArrayList<Couple> etatFinal = new ArrayList<>();
-            for(int i = 0; i < 259; i++) etatFinal.add(null);
+            for(int i = 0; i < 260; i++) etatFinal.add(null);
             etatFinal.set(257, new Couple(0));
             etatFinal.set(258, new Couple(1));
             res.put(node_counter++, etatFinal); 
@@ -172,7 +173,100 @@ public class EPSndfa {
 
             */
         
-        }
+        } else if(tree.root == ALTERN){
+            /*
+
+            id a b c d ... epsilon init final
+            0  1                     T    F 
+            1                        F    T
+
+            id a b c d ... epsilon init final
+            2    3                   T    F 
+            3                        F    T  
+
+            id a b c d ... epsilon init final
+            0  1                     F    F 
+            1                 5      F    F
+            2    3                   F    F
+            3                 5      F    F
+            4                 0,2    T    F
+            5                        F    T
+
+
+            id a b c d ... epsilon init final
+            1                        F    T
+            3                        F    T
+            4  1 3                   T    F
+            
+
+            un etat avec uniquement des eps-transition en entree disparait,
+            1) s'il n'est pas final, les transitions qu'il a en sortie sont transposées
+            sur les noeuds entrants qu'il avait
+            2) s'il est final, il transmet son statut aux noeuds entrants qu'il avait
+            
+            
+            */
+
+            if(tree.subTrees.size() != 2) throw new Exception("Nombre d'elements incorrect");
+
+            HashMap<Integer, ArrayList<Couple>> resGauche = getEpsNDFA(tree.subTrees.get(0));
+            HashMap<Integer, ArrayList<Couple>> resDroite = getEpsNDFA(tree.subTrees.get(1));
+
+
+            ArrayList<Couple> etatInit = new ArrayList<>();
+            for(int i = 0; i < 260; i++) etatInit.add(null);               
+            etatInit.set(257, new Couple(1));
+            etatInit.set(258, new Couple(0));
+            res.put(node_counter++, etatInit);   
+            ArrayList<Couple> etatFinal = new ArrayList<>();
+            for(int i = 0; i < 260; i++) etatFinal.add(null);
+            etatFinal.set(257, new Couple(0));
+            etatFinal.set(258, new Couple(1));
+            res.put(node_counter++, etatFinal); 
+
+            
+            Integer idInitg = -1;
+            Integer idFinalg = -1;
+            for(Integer id : resGauche.keySet()){
+                ArrayList<Couple> noeud = resGauche.get(id);
+                // on cherche l'etat initial
+                if(noeud.get(257).equals(new Couple(1))){
+                    idInitg = id;
+                    noeud.set(257,new Couple(0));
+                }          
+                // on cherche l'etat final
+                if(noeud.get(258).equals(new Couple(1))){
+                    idFinalg = id;
+                    noeud.set(258, new Couple(0));
+                    
+                }
+            }
+            Integer idInitd = -1;
+            Integer idFinald = -1;
+            for(Integer id : resDroite.keySet()){
+                ArrayList<Couple> noeud = resDroite.get(id);
+                // on cherche l'etat initial
+                if(noeud.get(257).equals(new Couple(1))){
+                    idInitd = id;
+                    noeud.set(257,new Couple(0));
+                }          
+                // on cherche l'etat final
+                if(noeud.get(258).equals(new Couple(1))){
+                    idFinald = id;
+                    noeud.set(258, new Couple(0));
+                    
+                }
+            }
+
+            etatInit.set(256, new Couple(idInitg, idInitd));
+            resGauche.get(idFinalg).set(256, new Couple(node_counter - 1));
+            resDroite.get(idFinald).set(256, new Couple(node_counter - 1));
+
+
+            res.putAll(resGauche);
+            res.putAll(resDroite);
+
+        } 
         
 
         return res;
