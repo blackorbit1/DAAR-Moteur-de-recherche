@@ -5,14 +5,14 @@ import java.lang.Exception;
 
 public class RegEx {
     //MACROS
-    static final int CONCAT = 0xC04CA7;
-    static final int ETOILE = 0xE7011E;
-    static final int ALTERN = 0xA17E54;
-    static final int PROTECTION = 0xBADDAD;
+    static final int CONCAT = Main.CONCAT;
+    static final int ETOILE = Main.ETOILE;
+    static final int ALTERN = Main.ALTERN;
+    static final int PROTECTION = Main.PROTECTION;
 
-    static final int PARENTHESEOUVRANT = 0x16641664;
-    static final int PARENTHESEFERMANT = 0x51515151;
-    static final int DOT = 0xD07;
+    static final int PARENTHESEOUVRANT = Main.PARENTHESEOUVRANT;
+    static final int PARENTHESEFERMANT = Main.PARENTHESEFERMANT;
+    static final int DOT = Main.DOT;
 
     //REGEX
     private static String regEx;
