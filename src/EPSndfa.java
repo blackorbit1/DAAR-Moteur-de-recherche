@@ -272,7 +272,7 @@ public class EPSndfa {
         return res;
     }
 
-    public void printAutomatonMatrix(HashMap<Integer, ArrayList<Couple>> matrix){
+    public void printAutomatonMatrix_old(HashMap<Integer, ArrayList<Couple>> matrix){
         for(Integer id : matrix.keySet()){
             ArrayList<Couple> noeud = matrix.get(id);
 
@@ -282,6 +282,23 @@ public class EPSndfa {
                 if(couple != null){
                     System.out.print("col_" + i + ":" + couple + " ");
                 }
+            }
+            System.out.println("");
+        }
+    }
+
+
+    public void printAutomatonMatrix(HashMap<Integer, ArrayList<ArrayList<Integer>>> matrix){
+        for(Integer id : matrix.keySet()){
+            ArrayList<ArrayList<Integer>> noeud = matrix.get(id);
+
+            System.out.print(id + " : ");
+            for(int i = 0; i < noeud.size(); i++){
+                ArrayList<Integer> elements = noeud.get(i);
+                
+                if(elements != null && elements.size() > 0){
+                    System.out.print("col_" + i + ":" + elements+" ");
+                } 
             }
             System.out.println("");
         }

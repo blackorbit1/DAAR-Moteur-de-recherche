@@ -50,7 +50,7 @@ public class Main {
         try { 
             EPSndfa epsndfa = new EPSndfa();
             HashMap<Integer, ArrayList<Couple>> res = epsndfa.getEpsNDFA(ret);
-            epsndfa.printAutomatonMatrix(res);
+            epsndfa.printAutomatonMatrix_old(res);
             (new EPSdfa()).getEpsDFA(res);
         } catch (Exception e) {
             e.printStackTrace();
