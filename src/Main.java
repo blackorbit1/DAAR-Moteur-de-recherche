@@ -1,4 +1,6 @@
 import java.util.Scanner;
+import java.util.HashMap;
+import java.util.ArrayList;
 
 public class Main {
     static final int CONCAT = 0xC04CA7;
@@ -45,9 +47,11 @@ public class Main {
 
         // === === === 2e etape === === === // 
 
-        try {
+        try { 
             EPSndfa epsndfa = new EPSndfa();
-            epsndfa.printAutomatonMatrix(epsndfa.getEpsNDFA(ret));
+            HashMap<Integer, ArrayList<Couple>> res = epsndfa.getEpsNDFA(ret);
+            epsndfa.printAutomatonMatrix(res);
+            (new EPSdfa()).getEpsDFA(res);
         } catch (Exception e) {
             e.printStackTrace();
         }
