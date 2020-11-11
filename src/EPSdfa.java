@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 public class EPSdfa {
     //MACROS
@@ -18,54 +19,9 @@ public class EPSdfa {
     public HashMap<Integer,  ArrayList<ArrayList<Integer>>> getEpsDFA(HashMap<Integer, ArrayList<Couple>> ndfa) throws Exception {
 
 
-        /*
-        // on crée un nouveau tableau avec les noeuds entrant au lieu de sortant afin de faciliter
-        // la creation d'un automate deterministe sans epsilon
-        HashMap<Integer, ArrayList<Couple>> ndfa_entrant = new HashMap<>();
-
-        // creation de toutes les lignes de ndfa_entrant
-        for(Integer in : ndfa.keySet()){
-            // construction d'une ligne du tableau
-            ArrayList<Couple> tmp = new ArrayList<>();
-            for(int i = 0; i < 260; i++) tmp.add(null);
-            ndfa_entrant.put(in, tmp);
-
-            // par defaut, ni initial ni final
-            tmp.set(258, new Couple(0));
-            tmp.set(257,new Couple(0));
-            
-            if(ndfa.get(in).get(257).equals(new Couple(1))){ // etat initial
-                tmp.set(257,new Couple(1));
-            } if(ndfa.get(in).get(258).equals(new Couple(1))){ // etat final
-                tmp.set(258, new Couple(1));    
-            }
-        }
-
-        // remplissage des lignes de ndfa_entrant
-        for(Integer in : ndfa.keySet()){
-            ArrayList<Couple> ligneN = ndfa.get(in);
-            for(int i = 0; i < ligneN.size(); i++){
-                // les etats initiaux et finaux ne correspondent pas a des transitions
-                if(i == 257 || i == 258) continue;
-                Couple elt = ligneN.get(i);
-                if(elt != null){
-                    ndfa_entrant.get(elt.first).set(i ,new Couple(in)); 
-                    if(elt.getNbElem() == 2) ndfa_entrant.get(elt.second).set(i ,new Couple(in));
-                }
-            }
-        } 
-        */
-        
-
-
-
-
-
-
-
-        // creation du tableau représentant l'automate déterministe en utilisant des listes
+        // creation du tableau repr�sentant l'automate d�terministe en utilisant des listes
         // au lieu de couple pour les aretes sortantes
-        HashMap<Integer, ArrayList<ArrayList<Integer>>> result = new HashMap<>();
+        HashMap<Integer, ArrayList<ArrayList<Integer>>> ndfa_sortant = new HashMap<>();
         for(Integer ligne_num : ndfa.keySet()) {
             ArrayList<ArrayList<Integer>> newLine = new ArrayList<>();
             for(Couple elt : ndfa.get(ligne_num)) {
@@ -76,16 +32,16 @@ public class EPSdfa {
                 }
                 newLine.add(sorties);
             }
-            result.put(ligne_num, newLine);
+            ndfa_sortant.put(ligne_num, newLine);
         }
 
 
-        // on crée un nouveau tableau avec les noeuds entrant au lieu de sortant afin de faciliter
+        // on cr�e un nouveau tableau avec les noeuds entrant au lieu de sortant afin de faciliter
         // la creation d'un automate deterministe sans epsilon
         HashMap<Integer, ArrayList<ArrayList<Integer>>> ndfa_entrant = new HashMap<>();
 
         // creation de toutes les lignes de ndfa_entrant
-        for(Integer in : result.keySet()){
+        for(Integer in : ndfa_sortant.keySet()){
             // construction d'une ligne du tableau
             ArrayList<ArrayList<Integer>> tmp = new ArrayList<>();
             for(int i = 0; i < 260; i++) tmp.add(null);
@@ -94,179 +50,186 @@ public class EPSdfa {
             // par defaut, ni initial ni final
             tmp.set(258, getArrayList(0));
             tmp.set(257, getArrayList(0));
-            
-            if(result.get(in).get(257).equals(getArrayList(1))){ // etat initial
+
+            if(ndfa_sortant.get(in).get(257).equals(getArrayList(1))){ // etat initial
                 tmp.set(257, getArrayList(1));
-            } if(result.get(in).get(258).equals(getArrayList(1))){ // etat final
-                tmp.set(258, getArrayList(1));    
+            } if(ndfa_sortant.get(in).get(258).equals(getArrayList(1))){ // etat final
+                tmp.set(258, getArrayList(1));
             }
         }
 
         // remplissage des lignes de ndfa_entrant
-        for(Integer in : result.keySet()){
-            ArrayList<ArrayList<Integer>> ligneN = result.get(in);
+        for(Integer in : ndfa_sortant.keySet()){
+            ArrayList<ArrayList<Integer>> ligneN = ndfa_sortant.get(in);
             for(int i = 0; i < ligneN.size(); i++){
                 // les etats initiaux et finaux ne correspondent pas a des transitions
                 if(i == 257 || i == 258) continue;
                 ArrayList<Integer> elt = ligneN.get(i);
-                if(elt != null && elt.size() > 0){ 
+                if(elt != null && elt.size() > 0){
 
-                    ndfa_entrant.get(elt.get(0)).set(i ,getArrayList(in)); 
+                    ndfa_entrant.get(elt.get(0)).set(i ,getArrayList(in));
 
                     if(elt.size() == 2) ndfa_entrant.get(elt.get(1)).set(i ,getArrayList(in));
                 }
             }
-        } 
+        }
 
 
 
-        System.out.print("\n\n");
-        (new EPSndfa()).printAutomatonMatrix(ndfa_entrant);  
-
-        
+        System.out.println("\nndfa entrant : ");
+        (new EPSndfa()).printAutomatonMatrix(ndfa_entrant);
 
 
+        // selection des noeuds "importants" pour le resultat
+        HashMap<Integer, ArrayList<ArrayList<Integer>>> result = new HashMap<>();
+        for(Integer ligne_num : ndfa_sortant.keySet()) {
+            ArrayList<ArrayList<Integer>> newLine = new ArrayList<>();
+            ArrayList<ArrayList<Integer>> line_entrant = ndfa_entrant.get(ligne_num);
+            ArrayList<ArrayList<Integer>> line_sortant = ndfa_sortant.get(ligne_num);
+            boolean c1 = false;
+            for(int i = 0; i < line_entrant.size(); i++) {
+                if(line_entrant.get(i) != null && (i < 256 || i > 258)) {
+                    c1 = true;
+                    break;
+                }
+            }
+            if (line_entrant.get(257).get(0) == 1) c1 = true;
+            if(c1) {
+                for(int i = 0; i < 260; i++) newLine.add(null);
+                newLine.set(258, line_sortant.get(258));
+                newLine.set(257, line_sortant.get(257));
+                result.put(ligne_num, newLine);
+            }
+        }
 
+        // creation de la matrice de transitions
+        int nbNoeuds = ndfa_sortant.keySet().size();
+        int[][] transiMatrix = new int[nbNoeuds][nbNoeuds];
 
+        for(Integer ligne_num : ndfa_sortant.keySet()) {
+            for(int i = 0; i < ndfa_sortant.get(ligne_num).size(); i++) {
+                if(i == 257 || i == 258) continue;
+                ArrayList<Integer> transiListe = ndfa_sortant.get(ligne_num).get(i);
+                if(transiListe != null) {
+                    for(Integer elt : transiListe) {
+                        transiMatrix[ligne_num][elt] = 1;
+                    }
+                }
+            }
+        }
+        for(int i = 0; i < nbNoeuds; i++) {
+            transiMatrix[i][i] = 1;
+        }
 
+        // remplissage des transitions du resultat
+        for(Integer ligne_num : result.keySet()) {
+            HashMap<Integer,Integer> transis = getTransis(ligne_num, transiMatrix, ndfa_sortant);
+            for(Integer etatArr : transis.keySet()) {
+                Integer transi = transis.get(etatArr);
+                ArrayList<Integer> elt = result.get(ligne_num).get(transi);
+                if(elt == null) {
+                    result.get(ligne_num).set(transi, new ArrayList<Integer>());
+                    elt = result.get(ligne_num).get(transi);
+                }
+                elt.add(etatArr);
+            }
+        }
 
-
-
-        
-
-
+        // recuperation des etats finaux dans le resultat
+        for(Integer ligne_num : result.keySet()) {
+            result.get(ligne_num).get(258).set(0, getFinal(ligne_num, transiMatrix, ndfa_sortant) ? 1 : 0);
+        }
 
         /*
-        id a b c d ... epsilon init final
-        0  1                     F    F 
-        1                 5      F    F
-        2    3                   F    F
-        3                 5      F    F
-        4                 0,2    T    F
-        5                        F    T
+        nous : papier
+		0 : 1
+		1 : 2
+		2 : 4
+		3 : 5
+		4 : 7
+		5 : 8
+		6 : 6
+		7 : 9
+		8 : 0
+		9 : 3
 
-
-        id a b c d ... epsilon init final
-        1                        F    T
-        3                        F    T
-        4  1 3                   T    F
-        
-
-        un etat avec uniquement des eps-transition en entree disparait,
-        1) s'il n'est pas final, les transitions qu'il a en sortie sont transposées
-        sur les noeuds entrants qu'il avait
-        2) s'il est final, il transmet son statut aux noeuds entrants qu'il avait
         */
-
-        // parcours de toutes les lignes
-        // verification des transitions en entree, si les seules sont des epsilon (col 256)
-        //      verif si etat final
-        //          si oui : les etats en entree deviennent finaux
-        //          si non : ses sorties sont ajoutees aux etats en entree
-        //      il disparait (pas d'ajout au nouveau tableau)
-
-        
-        
-        boolean condWhile = false;
-        do { 
-            // parcours de toutes les lignes            
-            for(Integer ligne_num : ndfa.keySet()){
-                ArrayList<ArrayList<Integer>> ligne_en = ndfa_entrant.get(ligne_num); // tableau des entrees
-                ArrayList<ArrayList<Integer>> ligne_so = result.get(ligne_num); // tableau des sorties
-
-                // que des eps en entree = 
-                // nombre de colonnes non null == 3 (car eps + init + final) et col 256 non null
-                boolean c1 = (ligne_en.get(256) != null);
-                int nbNotNull = 0; 
-                for(ArrayList<Integer> c : ligne_en) if (c != null) nbNotNull++;
-                boolean c2 = nbNotNull == 3;
-                if(c1 && c2){ // uniquement des transitions epsilon en entree
-                    if(ligne_en.get(258).get(0) == 1){ // si etat final 
-                        // les etats en entree deviennent finaux 
-                        ArrayList<Integer> elt = ligne_en.get(256); // on met 1 dans la liste 258 de l'etat en entree, la liste n'a que 0 pour le moment
-                        for(int i = 0; i < elt.size(); i++){         
-                            // gestion dans la liste sortant               
-                            result.get(elt.get(i)).get(258).set(0, 1);       
-                            // gestion dans la liste entrants     
-                            ndfa_entrant.get(elt.get(i)).get(258).set(0, 1);
-                        }
-                    } else {
-                        // les sorties sont ajoutees aux etats en entree
-                        HashMap<Integer, ArrayList<Integer>> mapSorties = new HashMap<>();
-                        for(int i = 0; i < ligne_so.size(); i++){
-                            if(i == 257 || i == 258) continue;
-                            ArrayList<Integer> elt = ligne_so.get(i);
-                            if(elt != null){
-                                // map de toutes les sorties
-                                mapSorties.put(i, result.get(ligne_num).get(i));
-                            }
-                        } 
-                        ArrayList<Integer> entrants = new ArrayList<>();
-                        ArrayList<Integer> elt = ligne_en.get(256);
-                        for(Integer in : elt){ // on va dans tous les noeuds entrants (via epsilon)
-                            for(Integer inM : mapSorties.keySet()){ // on ajoute dans le noeud toutes les sorties de tous les noeuds que contient mapSorties (toutes les sorties du noeud à supprimer)
-                                
-                                // il faut remplacer dans entrants, les sortantes du noeud en cours
-                                // dans le result on transfere les transitions sortantes en les donnants à nos transitions entrantes
-                                // il faut aussi faire l'inverse, donner nos transitions entrantes aux recepteurs de nos transitions sortantes
-                                
-                                // si on a a -(eps)-> b -(c)-> c 
-                                // on aura a -(c)-> c 
-                                // pour le moment 'a' possede l'info qu'il doit aller vers c avec une transi c
-                                // mais 'c' n'a pas l'info que sa transition c arrive par 'a' et plus par 'b'
-                                
-                                // on va dire à a, au lieu de pointer sur b maintenant tu pointes sur c
-                                try{ // si le noeud qu'on compresse a des sortants epsilon, on doit les garder mais 
-                                // supprimer l'info que le noeud in a une sortie epsilon vers le noeud en cours de compresson
-                                    result.get(in).get(inM).addAll(mapSorties.get(inM));
-                                    result.get(in).get(256).remove(ligne_num);
-
-                                    // la il faut regarder pour toutes nos transitions sortantes (nous = ligne_num)
-                                    // on va au noeud au bout de la transition, on se retire de sa liste de transitions entrantes
-                                    // a la colonne de la transition qu'on vient d'emprunter
-                                    // puis on ajoute le noeud entrant actuel (in) à la place
-                                    // on doit se placer à la ligne correspondant à la valeur de mapSorties.get(inM)
-                                    for(Integer a_modifier : mapSorties.get(inM)){
-                                        ndfa_entrant.get(a_modifier).get(inM).remove(ligne_num);
-                                        ndfa_entrant.get(a_modifier).get(inM).add(in);
-                                        // ce qu'on fait est bon je pense, mais pas suffisant car il reste du epsilon
-                                    }
-                                    
-                                } catch (NullPointerException e){
-                                    System.err.println("erreur : "+ligne_num+" "+in+" "+inM+" "+mapSorties.get(inM));
-                                    e.printStackTrace();
-                                    System.exit(1);
-                                }
-                                // on ajoute les nouvelles sorties aux etats qui sont en entree 
-                                // donc je vois pas ce qu'on doit modifier dans entrants
-                                
-                                /*
-                                bah du coup faut print le resultat final
-                                */
-                            }
-                        }
-                    }
-                    result.remove(ligne_num);
-                    ndfa_entrant.remove(ligne_num);
-
-                }
-            }
-            condWhile = false;
-            for(Integer in : result.keySet()){
-                if(result.get(in).get(256).size() > 0){
-                    //condWhile = true;
-                }
-            }
-        } while (condWhile);
+        /* depart : creation de la matrice de transitions
+         * 1) creation de result en ne considerant que les lignes "importantes" : celles qui
+         * ont au moins une transition non eps entrante
+         * 2) remplissage de result :
+         * on regarde pour chacune de ses transitions sortantes
+         * 		parcours recursif de toutes les transitions sortantes
+         * on renvoie la liste des etats auxquels on arrive en parcourant chaque transition
+         * sortante, en ne considerant que les etats importants
+         *
+         * transport de l'info sur l'etat final : parcours recursif de toutes les eps transitions, si une
+         * amene a un etat final, on remonte l'info et on devient final
+         *
+         *
+         */
 
 
-        
-        System.out.println("\n\n");
+
+        System.out.println("\ndfa : ");
         (new EPSndfa()).printAutomatonMatrix(result);
 
 
-        return result; 
-        
+        return result;
+
+    }
+
+    private boolean getFinal(Integer ligne_num, int[][] transiMatrix,
+                             HashMap<Integer, ArrayList<ArrayList<Integer>>> ndfa_sortant) {
+        int sumTM = 0;
+        for(int i : transiMatrix[ligne_num]) sumTM += i;
+        if(sumTM == 1) {
+            return ndfa_sortant.get(ligne_num).get(258).get(0) == 1;
+        }
+
+        for(int i = 0; i < transiMatrix.length; i++) {
+            if (transiMatrix[ligne_num][i] == 1 && i != ligne_num){
+                if(ndfa_sortant.get(i).get(258).get(0) == 1) return true;
+                if(ndfa_sortant.get(i).get(256) == null) continue;
+                ArrayList<Integer> ndfasi = ndfa_sortant.get(i).get(256);
+                for(int j = 0; j < ndfasi.size(); j++) {
+                    if(ndfasi.get(j) != ligne_num) {
+                        boolean res0 = getFinal(ndfasi.get(j), transiMatrix, ndfa_sortant);
+                        if(res0) return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private HashMap<Integer, Integer> getTransis(Integer ligne_num, int[][] transiMatrix,
+                                                 HashMap<Integer, ArrayList<ArrayList<Integer>>> ndfa_sortant) {
+        HashMap<Integer,Integer> res = new HashMap<>();
+        for(int i = 0; i < transiMatrix.length; i++) {
+            if (transiMatrix[ligne_num][i] == 1){
+                int val = -1;
+                int key = -1;
+                for(int j = 0; j < ndfa_sortant.get(ligne_num).size(); j++) {
+                    if(j == 257 || j == 258) continue;
+                    if(ndfa_sortant.get(ligne_num).get(j) != null) {
+                        for(Integer elt : ndfa_sortant.get(i).get(j)) {
+                            val = j;
+                            key = elt;
+                            if(val == 256 ) {
+                                if(ligne_num != i)
+                                    res.putAll(getTransis(i, transiMatrix, ndfa_sortant));
+                            } else {
+                                res.put(key, val);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return res;
     }
 
     private ArrayList<Integer> getArrayList(int a){
@@ -282,6 +245,15 @@ public class EPSdfa {
     }
 
 
- 
+
+
+
+
+
+
+
+
+
+
 
 }
