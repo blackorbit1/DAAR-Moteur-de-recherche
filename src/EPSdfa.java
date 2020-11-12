@@ -16,7 +16,7 @@ public class EPSdfa {
 
     public EPSdfa(){}
 
-    public HashMap<Integer,  ArrayList<ArrayList<Integer>>> getEpsDFA(HashMap<Integer, ArrayList<Couple>> ndfa) throws Exception {
+    public HashMap<Integer, ArrayList<ArrayList<Integer>>> getEpsDFA(HashMap<Integer, ArrayList<Couple>> ndfa) throws Exception {
 
 
         // creation du tableau repr�sentant l'automate d�terministe en utilisant des listes
@@ -171,8 +171,7 @@ public class EPSdfa {
 
 
 
-        System.out.println("\ndfa : ");
-        (new EPSndfa()).printAutomatonMatrix(result);
+
 
 
         return result;

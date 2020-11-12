@@ -11,6 +11,7 @@ public class Main {
     static final int PARENTHESEOUVRANT = 0x16641664;
     static final int PARENTHESEFERMANT = 0x51515151;
     static final int DOT = 0xD07;
+
     public static void main(String [] arg){
 
         // === === === 1e etape === === === // 
@@ -45,19 +46,35 @@ public class Main {
         System.out.println("Wait Mr. Anderson. .. processing ....");
 
 
-        // === === === 2e etape === === === // 
+        // === === === 2e etape === === === //
+
+        HashMap<Integer, ArrayList<Couple>> ndfa = null;
 
         try { 
             EPSndfa epsndfa = new EPSndfa();
-            HashMap<Integer, ArrayList<Couple>> res = epsndfa.getEpsNDFA(ret);
-            epsndfa.printAutomatonMatrix_old(res);
-            (new EPSdfa()).getEpsDFA(res);
+            ndfa = epsndfa.getEpsNDFA(ret);
+            epsndfa.printAutomatonMatrix_old(ndfa);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        
-        
+
+        // === === === 3e etape === === === //
+
+        HashMap<Integer, ArrayList<ArrayList<Integer>>> dfa = null;
+
+        try {
+            dfa = new EPSdfa().getEpsDFA(ndfa);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("\ndfa : ");
+        (new EPSndfa()).printAutomatonMatrix(dfa);
+
+
+
+
     }
     
 }
