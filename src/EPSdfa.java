@@ -16,10 +16,10 @@ public class EPSdfa {
 
     public EPSdfa(){}
 
-    public HashMap<Integer, ArrayList<ArrayList<Integer>>> getEpsDFA(HashMap<Integer, ArrayList<Couple>> ndfa) throws Exception {
+    public HashMap<Integer,  ArrayList<ArrayList<Integer>>> getEpsDFA(HashMap<Integer, ArrayList<Couple>> ndfa) throws Exception {
 
 
-        // creation du tableau repr�sentant l'automate d�terministe en utilisant des listes
+        // creation du tableau représentant l'automate déterministe en utilisant des listes
         // au lieu de couple pour les aretes sortantes
         HashMap<Integer, ArrayList<ArrayList<Integer>>> ndfa_sortant = new HashMap<>();
         for(Integer ligne_num : ndfa.keySet()) {
@@ -36,7 +36,7 @@ public class EPSdfa {
         }
 
 
-        // on cr�e un nouveau tableau avec les noeuds entrant au lieu de sortant afin de faciliter
+        // on crée un nouveau tableau avec les noeuds entrant au lieu de sortant afin de faciliter
         // la creation d'un automate deterministe sans epsilon
         HashMap<Integer, ArrayList<ArrayList<Integer>>> ndfa_entrant = new HashMap<>();
 
@@ -171,7 +171,8 @@ public class EPSdfa {
 
 
 
-
+        System.out.println("\ndfa : ");
+        (new EPSndfa()).printAutomatonMatrix(result);
 
 
         return result;
