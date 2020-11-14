@@ -1,3 +1,5 @@
+import java.awt.*;
+import java.util.List;
 import java.util.Scanner;
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -86,13 +88,14 @@ public class Main {
 
     }
 
+
     public static void main(String [] arg){
 
         // === === === 1e etape === === === //
         System.out.println("\n\n=== === === 1e etape === === ===");
 
         RegExTree ret = null;
-            
+
         System.out.println("Welcome to Bogota, Mr. Thomas Anderson.");
         String regEx = "";
         if (arg.length!=0) {
@@ -104,14 +107,14 @@ public class Main {
         }
         System.out.println("  >> Parsing regEx \""+regEx+"\".");
         System.out.println("  >> ...");
-        
+
         if (regEx.length()<1) {
             System.err.println("  >> ERROR: empty regEx.");
         } else {
             System.out.print("  >> ASCII codes: ["+(int)regEx.charAt(0));
             for (int i=1;i<regEx.length();i++) System.out.print(","+(int)regEx.charAt(i));
             System.out.println("].");
-            
+
             ret = RegEx.getRegExTree(regEx);
 
         }
@@ -129,7 +132,7 @@ public class Main {
 
         HashMap<Integer, ArrayList<Couple>> ndfa = null;
 
-        try { 
+        try {
             EPSndfa epsndfa = new EPSndfa();
             ndfa = epsndfa.getEpsNDFA(ret);
             epsndfa.printAutomatonMatrix_old(ndfa);
@@ -169,10 +172,15 @@ public class Main {
 
 
         // === === === 5e etape === === === //
+        System.out.println("\n\n=== === === 5e etape === === ===");
 
+        boolean resultat_bool = false;
+        ArrayList<String> resultat_lignes = new ArrayList<>();
+        HashMap<Integer, ArrayList<Couple>> resultat_lignes_pos = new HashMap<>();
+
+        String CHOIX = "resultat_lignes_pos";
+        boolean MULTI_CPU = true;
         String regex = "mama";
-        int [] carryover = KMP.getCarryOver(regex);
-
         ArrayList<String> texte = new ArrayList<>();
         texte.add("miama mamamamia ma maman miamamam");
         texte.add("roger aime jouer en ultra");
@@ -180,7 +188,52 @@ public class Main {
         texte.add("steven apprecie les moelleux");
         texte.add("miama maman miamaamamia ma mamamam");
 
-        System.out.println(new KMP().contientWithLignesEtPos(regex, carryover, texte));
+
+
+        int np = MULTI_CPU?Runtime.getRuntime().availableProcessors():1;
+        ThreadGroup tg = new ThreadGroup("main");
+        List<MultiCPUProcess> sims = new ArrayList<MultiCPUProcess>();
+
+        ArrayList<Integer> sizes = new ArrayList<Integer>();
+        int tmp = (int) (texte.size()/np);
+        for(int i = 0; i < np; i++) sizes.add(new Integer(tmp));
+        for(int i = (texte.size() - tmp * np ); i > 0; i--) sizes.set(i, sizes.get(i) + 1);
+
+        for (int i=0, position = 0;i<np;i++) {
+            sims.add(new MultiCPUProcess(tg, "PI"+i, new ArrayList<String>(texte.subList(position, position + sizes.get(i))), CHOIX, dfa));
+            position += sizes.get(i);
+        }
+
+        int i=0;
+        while (i<sims.size()){
+            if (tg.activeCount()<np){ // do we have available CPUs?
+                MultiCPUProcess sim = sims.get(i);
+                sim.start();
+                i++;
+            } else {
+                try {Thread.sleep(100);} /*wait 0.1 second before checking again*/
+                catch (InterruptedException e) {e.printStackTrace();}
+            }
+        }
+
+        // on attend que tous les preocessus soient terminés avant de continuer
+        while(tg.activeCount()>0) { // wait for threads to finish
+            try {Thread.sleep(100);}
+            catch (InterruptedException e) {e.printStackTrace();}
+        }
+        // On recupere et concatene les résultats
+        for (i=0;i<sims.size();i++) {
+            MultiCPUProcess sim = sims.get(i);
+            if(CHOIX.equals("resultat_bool")) resultat_bool = resultat_bool || sim.getResultBool();
+            if(CHOIX.equals("resultat_lignes")) resultat_lignes.addAll(sim.getResultatLignes());
+            if(CHOIX.equals("resultat_lignes_pos")) resultat_lignes_pos.putAll(sim.getResultatLignesPos());
+        }
+
+
+
+
+
+        System.out.println("le résultat : \n" + resultat_lignes_pos);
 
         //texte.add("Avec cette ligne ça devrait marcher");
 

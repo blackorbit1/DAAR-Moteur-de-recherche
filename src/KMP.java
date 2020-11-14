@@ -39,7 +39,7 @@ public class KMP {
         return carryover;
     }
 
-    public static int[] getCarryOverFromDFA(HashMap<Integer, ArrayList<ArrayList<Integer>>> dfa){
+    public static String getRegexFromDFA(HashMap<Integer, ArrayList<ArrayList<Integer>>> dfa){
         // on recupere l'etat initial
         int etatI = -1;
         Integer etatCourant = -1;
@@ -79,18 +79,18 @@ public class KMP {
             regex[i] = (char) lettres_regex.get(i).intValue();
         }
 
-        return getCarryOver(new String(regex));
+        return new String(regex);
     }
 
-    public boolean contient(String regex, int[] carryover, ArrayList<String> text) {
+    public static boolean contient(String regex, int[] carryover, ArrayList<String> text) {
         for(int i = 0; i < text.size(); i++){
             String ligne = text.get(i);
 
             for(int position_texte = 0; position_texte < (ligne.length() - regex.length() + 1); position_texte++){
                 boolean match = true;
-                System.out.print("\nposition texte : " + position_texte + " /// ");
+                //System.out.print("\nposition texte : " + position_texte + " /// ");
                 for(int position_regex = 0; position_regex < regex.length(); position_regex++){
-                    System.out.print(position_regex + " ");
+                    //System.out.print(position_regex + " ");
                     if(regex.charAt(position_regex) != ligne.charAt(position_texte + position_regex)){
                         position_texte = (position_texte + position_regex) - carryover[position_regex] - 1;
                         match = false;
@@ -105,7 +105,7 @@ public class KMP {
         return false;
     }
 
-    public ArrayList<String> contientWithLignes(String regex, int[] carryover, ArrayList<String> text) {
+    public static ArrayList<String> contientWithLignes(String regex, int[] carryover, ArrayList<String> text) {
         ArrayList<String> result = new ArrayList<>();
 
         for(int i = 0; i < text.size(); i++){
@@ -115,9 +115,9 @@ public class KMP {
 
             for(int position_texte = 0; position_texte < (ligne.length() - regex.length() + 1); position_texte++){
                 match = true;
-                System.out.print("\nposition texte : " + position_texte + " /// ");
+                //System.out.print("\nposition texte : " + position_texte + " /// ");
                 for(int position_regex = 0; position_regex < regex.length(); position_regex++){
-                    System.out.print(position_regex + " ");
+                    //System.out.print(position_regex + " ");
                     if(regex.charAt(position_regex) != ligne.charAt(position_texte + position_regex)){
                         position_texte = (position_texte + position_regex) - carryover[position_regex] - 1;
                         match = false;
@@ -134,7 +134,7 @@ public class KMP {
         return result;
     }
 
-    public HashMap<Integer, ArrayList<Couple>> contientWithLignesEtPos(String regex, int[] carryover, ArrayList<String> text) {
+    public static HashMap<Integer, ArrayList<Couple>> contientWithLignesEtPos(String regex, int[] carryover, ArrayList<String> text) {
         HashMap<Integer, ArrayList<Couple>> result = new HashMap<>();
 
         for(int i = 0; i < text.size(); i++){
@@ -144,9 +144,9 @@ public class KMP {
 
             for(int position_texte = 0; position_texte < (ligne.length() - regex.length() + 1); position_texte++){
                 boolean match = true;
-                System.out.print("\nposition texte : " + position_texte + " /// ");
+                //System.out.print("\nposition texte : " + position_texte + " /// ");
                 for(int position_regex = 0; position_regex < regex.length(); position_regex++){
-                    System.out.print(position_regex + " ");
+                    //System.out.print(position_regex + " ");
                     if(regex.charAt(position_regex) != ligne.charAt(position_texte + position_regex)){
                         position_texte = (position_texte + position_regex) - carryover[position_regex] - 1;
                         match = false;
