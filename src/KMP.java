@@ -20,7 +20,7 @@ public class KMP {
             for(int j = 1; j < i; j++){
                 if(regex.substring(0, j).equals(regex.substring(i-j, i))) longest_prefix_equal_suffix = j;
             }
-            if(longest_prefix_equal_suffix != 1) carryover[i] = longest_prefix_equal_suffix;
+            /*if(longest_prefix_equal_suffix != 1) erreur sujet */ carryover[i] = longest_prefix_equal_suffix;
         }
 
         // 2e boucle

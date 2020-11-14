@@ -165,9 +165,62 @@ public class Main {
         (new EPSndfa()).printAutomatonMatrix(reducsed_dfa);
 
 
+        // === === === 5e etape === === === //
+
+        ArrayList<String> texte = new ArrayList<>();
+        texte.add("Bonjour à vous");
+
+        System.out.println(new Containsdfa().contientWithLignesEtPos(reducsed_dfa, texte));
+
+        texte.add("Avec cette ligne ça devrait marcher");
+
+        System.out.println(new Containsdfa().contientWithLignesEtPos(reducsed_dfa, texte));
 
 
 
+
+        // === === test carry over === === //
+
+        String regex = "mamamia";
+
+        int [] carry_over = KMP.getCarryOver(regex);
+
+        System.out.print("[");
+        for(int i = 0; i < carry_over.length; i++){
+            System.out.print(carry_over[i]);
+            if(i < (carry_over.length - 1)) System.out.print(", ");
+        }
+        System.out.print("]\n");
+
+        regex = "mamaome";
+        carry_over = KMP.getCarryOver(regex);
+
+        System.out.print("[");
+        for(int i = 0; i < carry_over.length; i++){
+            System.out.print(carry_over[i]);
+            if(i < (carry_over.length - 1)) System.out.print(", ");
+        }
+        System.out.print("]\n");
+
+        regex = "mamaaaaaaome";
+        carry_over = KMP.getCarryOver(regex);
+
+        System.out.print("[");
+        for(int i = 0; i < carry_over.length; i++){
+            System.out.print(carry_over[i]);
+            if(i < (carry_over.length - 1)) System.out.print(", ");
+        }
+        System.out.print("]\n");
+
+        regex = "mammmmmmmome";
+        carry_over = KMP.getCarryOver(regex);
+
+        System.out.print("[");
+        for(int i = 0; i < carry_over.length; i++){
+            System.out.print(carry_over[i]);
+            if(i < (carry_over.length - 1)) System.out.print(", ");
+        }
+        System.out.print("]\n");
 
 
     }
