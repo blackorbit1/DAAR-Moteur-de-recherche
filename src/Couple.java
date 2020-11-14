@@ -1,4 +1,4 @@
-class Couple{
+public class Couple{
     public int first;
     public int second;
     private int nbElem;

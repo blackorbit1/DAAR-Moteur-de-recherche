@@ -20,10 +20,8 @@ public class EPSndfa {
         // .abcd
 /*
         (a|b)uyze
-
         /---> a uyze 
         \---> b uyze
-
               .
             /  \
             .   e
@@ -39,21 +37,15 @@ public class EPSndfa {
             .
         / \
         a  b
-
         -(start)-> 0i -(a)-> 1f 
-
         id a b c d ... epsilon init final
         0  1                     T    F
         1                        F    T
-
         
         -(start)-> 2i -(b)-> 3f 
-
         id a b c d ... epsilon init final
         2    3                   T    F 
         3                        F    T
-
-
         -(start)-> 0i -(a)-> 1 -(eps)-> 2 -(b)-> 3f 
         num col :        256    257  258 
         id a b c d ... epsilon init final 
@@ -67,7 +59,7 @@ public class EPSndfa {
         */
         HashMap<Integer, ArrayList<Couple>> res = new HashMap<>();
 
-        System.out.println("tree.root : " + tree.root);
+        //System.out.println("tree.root : " + tree.root);
         boolean c1 = (tree.root >= 0 && tree.root < 256);
         if( c1 || tree.root == DOT){
             ArrayList<Couple> etatInit = new ArrayList<>();
@@ -160,30 +152,24 @@ public class EPSndfa {
 
             res.putAll(resFils);
             /*
-
             id a b c d ... epsilon init final
             0  1                     T    F 
             1                        F    T
-
             id a b c d ... epsilon init final
             0  1                     F    F 
             1                0,3     F    F
             2                0,3     T    F
             3                        F    T
-
             */
         
         } else if(tree.root == ALTERN){
             /*
-
             id a b c d ... epsilon init final
             0  1                     T    F 
             1                        F    T
-
             id a b c d ... epsilon init final
             2    3                   T    F 
             3                        F    T  
-
             id a b c d ... epsilon init final
             0  1                     F    F 
             1                 5      F    F
@@ -191,16 +177,13 @@ public class EPSndfa {
             3                 5      F    F
             4                 0,2    T    F
             5                        F    T
-
-
             id a b c d ... epsilon init final
             1                        F    T
             3                        F    T
             4  1 3                   T    F
             
-
             un etat avec uniquement des eps-transition en entree disparait,
-            1) s'il n'est pas final, les transitions qu'il a en sortie sont transposÃ©es
+            1) s'il n'est pas final, les transitions qu'il a en sortie sont transposées
             sur les noeuds entrants qu'il avait
             2) s'il est final, il transmet son statut aux noeuds entrants qu'il avait
             

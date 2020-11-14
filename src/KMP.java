@@ -7,11 +7,11 @@ public class KMP {
 
         /* Etapes de construction
 
-        1e boucle : le nb de lettres qu’on peut avoir en allant de cette lettre vers les lettres de gauche où le préfixe est égale au suffixe (où la fin est la lettre où on est)
+        1e boucle : le nb de lettres qu�on peut avoir en allant de cette lettre vers les lettres de gauche o� le pr�fixe est �gale au suffixe (o� la fin est la lettre o� on est)
         2e boucle : remplacer les 0 par des -1 si la lettre est la meme que la 1e du regex en regardant la case juste au dessus
-        3e boucle : On regarde la case n°(ce qu’on a mis dans le carry over) et si c’est un -1 on remplace par un -1
+        3e boucle : On regarde la case n�(ce qu�on a mis dans le carry over) et si c�est un -1 on remplace par un -1
 
-        A noter : la premiere case n'est pas comptée et vaut toujours -1
+        A noter : la premiere case n'est pas compt�e et vaut toujours -1
 
         */
 
@@ -52,7 +52,7 @@ public class KMP {
             }
         }
         if(etatI == -1){
-            System.err.println("Etat initial non trouvé !");
+            System.err.println("Etat initial non trouv� !");
             return null;
         }
 
@@ -60,18 +60,18 @@ public class KMP {
 
         while(true){
             ArrayList<ArrayList<Integer>> noeud = dfa.get(etatCourant);
-            //System.out.println("noeud : " + noeud);
             int nb_sortants = 0;
             for(int i = 0; i < 257; i++){
                 if(nb_sortants > 1) return null;
                 if(noeud.get(i) != null && noeud.get(i).size() > 0){
                     nb_sortants++;
                     lettres_regex.add(i);
+                    //System.out.println("lettre : " + ((char) i));
                     etatCourant = noeud.get(i).get(0);
                 }
             }
-            if(nb_sortants == 0) return null; // dans le cas où le seul sortant serait un point
             if(noeud.get(258).get(0) == 1) break;
+            if(nb_sortants == 0) return null; // dans le cas o� le seul sortant serait un point
         }
 
         char [] regex = new char[lettres_regex.size()];

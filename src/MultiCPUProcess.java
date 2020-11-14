@@ -3,7 +3,7 @@ import java.util.HashMap;
 
 public class MultiCPUProcess extends Thread {
     private ArrayList<String> texte;
-    private String choice;
+    private int choice;
 
     HashMap<Integer, ArrayList<ArrayList<Integer>>> dfa;
 
@@ -22,7 +22,7 @@ public class MultiCPUProcess extends Thread {
         return resultat_lignes_pos;
     }
 
-    MultiCPUProcess (ThreadGroup tg, String name, ArrayList<String> texte, String choice, HashMap<Integer, ArrayList<ArrayList<Integer>>> dfa) {
+    MultiCPUProcess (ThreadGroup tg, String name, ArrayList<String> texte, int choice, HashMap<Integer, ArrayList<ArrayList<Integer>>> dfa) {
         super(tg,name);
 
         this.texte = texte;
@@ -33,16 +33,16 @@ public class MultiCPUProcess extends Thread {
     public void run() {
         //String regex = "mama";
         String regex = KMP.getRegexFromDFA(dfa);
-
+        System.out.println("regex : " + regex);
         if(regex != null){
             int [] kmp = KMP.getCarryOver(regex);
-            if(choice.equals("resultat_bool")) resultat_bool = KMP.contient(regex, kmp, texte);
-            if(choice.equals("resultat_lignes")) resultat_lignes = KMP.contientWithLignes(regex, kmp, texte);
-            if(choice.equals("resultat_lignes_pos")) resultat_lignes_pos = KMP.contientWithLignesEtPos(regex, kmp, texte);
+            if(choice == 1) resultat_bool = KMP.contient(regex, kmp, texte);
+            if(choice == 2) resultat_lignes = KMP.contientWithLignes(regex, kmp, texte);
+            if(choice == 3) resultat_lignes_pos = KMP.contientWithLignesEtPos(regex, kmp, texte);
         } else {
-            if(choice.equals("resultat_bool")) resultat_bool = new Containsdfa().contient(dfa, texte);
-            if(choice.equals("resultat_lignes")) resultat_lignes = new Containsdfa().contientWithLignes(dfa, texte);
-            if(choice.equals("resultat_lignes_pos")) resultat_lignes_pos = new Containsdfa().contientWithLignesEtPos(dfa, texte);
+            if(choice == 1) resultat_bool = new Containsdfa().contient(dfa, texte);
+            if(choice == 2) resultat_lignes = new Containsdfa().contientWithLignes(dfa, texte);
+            if(choice == 3) resultat_lignes_pos = new Containsdfa().contientWithLignesEtPos(dfa, texte);
         }
     }
 }

@@ -28,7 +28,6 @@ public class RegEx {
         try {
             //RegExTree ret = parse();
             ret = parse();
-            System.out.println("  >> Tree result: "+ret.toString()+".");
         } catch (Exception e) {
             System.err.println("  >> ERROR: syntax error for regEx \""+regEx+"\".");
         }
@@ -209,5 +208,3 @@ public class RegEx {
         return new RegExTree(ALTERN, subTrees);
     }
 }
-
-
