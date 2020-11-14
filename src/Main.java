@@ -120,6 +120,9 @@ public class Main {
         System.out.println("  >> Parsing completed.");
         System.out.println("Wait Mr. Anderson. .. processing ....");
 
+        ret = RegEx.getRegExTree("a|bc*");
+
+
 
         // === === === 2e etape === === === //
         System.out.println("\n\n=== === === 2e etape === === ===");
@@ -167,19 +170,28 @@ public class Main {
 
         // === === === 5e etape === === === //
 
+        String regex = "mama";
+        int [] carryover = KMP.getCarryOver(regex);
+
         ArrayList<String> texte = new ArrayList<>();
-        texte.add("Bonjour à vous");
+        texte.add("miama mamamamia ma maman miamamam");
+        texte.add("roger aime jouer en ultra");
+        texte.add("mimia ma maman miamama mamamaamam");
+        texte.add("steven apprecie les moelleux");
+        texte.add("miama maman miamaamamia ma mamamam");
 
-        System.out.println(new Containsdfa().contientWithLignesEtPos(reducsed_dfa, texte));
+        System.out.println(new KMP().contientWithLignesEtPos(regex, carryover, texte));
 
-        texte.add("Avec cette ligne ça devrait marcher");
+        //texte.add("Avec cette ligne ça devrait marcher");
 
-        System.out.println(new Containsdfa().contientWithLignesEtPos(reducsed_dfa, texte));
+        //System.out.println(new KMP().contientWithLignesEtPos(regex, carryover, texte));
 
 
 
 
         // === === test carry over === === //
+
+        /*
 
         String regex = "mamamia";
 
@@ -221,6 +233,22 @@ public class Main {
             if(i < (carry_over.length - 1)) System.out.print(", ");
         }
         System.out.print("]\n");
+        */
+
+        // === === test contains === === //
+
+        /*
+
+        ArrayList<String> text = new ArrayList<String>();
+        text.add("Bonjour à vous");
+        text.add("ceci est un test");
+        text.add("merci de ne pas y preter attention");
+
+        System.out.println(new Containsdfa().contient(dfa, text));
+
+        */
+
+        //System.out.println(new KMP().getCarryOverFromDFA(reducsed_dfa));
 
 
     }

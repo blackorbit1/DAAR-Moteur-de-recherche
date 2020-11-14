@@ -22,7 +22,7 @@ public class Containsdfa {
     private HashMap<Integer,  ArrayList<ArrayList<Integer>>> dfaInterne;
     private Integer etatI;
 
-    public boolean contient(HashMap<Integer,  ArrayList<ArrayList<Integer>>> dfa, ArrayList<String> text) {
+    public boolean contient(HashMap<Integer, ArrayList<ArrayList<Integer>>> dfa, ArrayList<String> text) {
 
         dfaInterne = dfa;
 
