@@ -53,13 +53,10 @@ public class EPSndfa {
         1                2       F    F
         2    3                   F    F 
         3                        F    T
-        
-            ArrayList<Couple> transition = new ArrayList<>();
-            for(int i = 0; i < 257; i++) transition.add(null);
+
         */
         HashMap<Integer, ArrayList<Couple>> res = new HashMap<>();
 
-        //System.out.println("tree.root : " + tree.root);
         boolean c1 = (tree.root >= 0 && tree.root < 256);
         if( c1 || tree.root == DOT){
             ArrayList<Couple> etatInit = new ArrayList<>();
@@ -183,7 +180,7 @@ public class EPSndfa {
             4  1 3                   T    F
             
             un etat avec uniquement des eps-transition en entree disparait,
-            1) s'il n'est pas final, les transitions qu'il a en sortie sont transposées
+            1) s'il n'est pas final, les transitions qu'il a en sortie sont transposï¿½es
             sur les noeuds entrants qu'il avait
             2) s'il est final, il transmet son statut aux noeuds entrants qu'il avait
             

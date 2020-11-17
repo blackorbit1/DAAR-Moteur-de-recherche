@@ -7,11 +7,11 @@ public class KMP {
 
         /* Etapes de construction
 
-        1e boucle : le nb de lettres qu�on peut avoir en allant de cette lettre vers les lettres de gauche o� le pr�fixe est �gale au suffixe (o� la fin est la lettre o� on est)
+        1e boucle : le nb de lettres qu on peut avoir en allant de cette lettre vers les lettres de gauche ou le prefixe est egale au suffixe (ou la fin est la lettre ou on est)
         2e boucle : remplacer les 0 par des -1 si la lettre est la meme que la 1e du regex en regardant la case juste au dessus
-        3e boucle : On regarde la case n�(ce qu�on a mis dans le carry over) et si c�est un -1 on remplace par un -1
+        3e boucle : On regarde la case num(ce qu on a mis dans le carry over) et si c est un -1 on remplace par un -1
 
-        A noter : la premiere case n'est pas compt�e et vaut toujours -1
+        A noter : la premiere case n'est pas comptee et vaut toujours -1
 
         */
 
@@ -66,12 +66,11 @@ public class KMP {
                 if(noeud.get(i) != null && noeud.get(i).size() > 0){
                     nb_sortants++;
                     lettres_regex.add(i);
-                    //System.out.println("lettre : " + ((char) i));
                     etatCourant = noeud.get(i).get(0);
                 }
             }
             if(noeud.get(258).get(0) == 1) break;
-            if(nb_sortants == 0) return null; // dans le cas o� le seul sortant serait un point
+            if(nb_sortants == 0) return null; // dans le cas ou le seul sortant serait un point
         }
 
         char [] regex = new char[lettres_regex.size()];
@@ -88,9 +87,7 @@ public class KMP {
 
             for(int position_texte = 0; position_texte < (ligne.length() - regex.length() + 1); position_texte++){
                 boolean match = true;
-                //System.out.print("\nposition texte : " + position_texte + " /// ");
                 for(int position_regex = 0; position_regex < regex.length(); position_regex++){
-                    //System.out.print(position_regex + " ");
                     if(regex.charAt(position_regex) != ligne.charAt(position_texte + position_regex)){
                         position_texte = (position_texte + position_regex) - carryover[position_regex] - 1;
                         match = false;
@@ -98,10 +95,8 @@ public class KMP {
                     }
                 }
                 if(match) return true;
-
             }
         }
-
         return false;
     }
 
@@ -110,24 +105,22 @@ public class KMP {
 
         for(int i = 0; i < text.size(); i++){
             String ligne = text.get(i);
-            boolean match = true;
-
+            boolean match = false;
 
             for(int position_texte = 0; position_texte < (ligne.length() - regex.length() + 1); position_texte++){
-                match = true;
-                //System.out.print("\nposition texte : " + position_texte + " /// ");
+                match = false;
                 for(int position_regex = 0; position_regex < regex.length(); position_regex++){
-                    //System.out.print(position_regex + " ");
                     if(regex.charAt(position_regex) != ligne.charAt(position_texte + position_regex)){
                         position_texte = (position_texte + position_regex) - carryover[position_regex] - 1;
                         match = false;
                         break;
+                    } else {
+                        match = true;
                     }
                 }
                 if(match) break;
 
             }
-
             if(match) result.add(ligne);
         }
 
@@ -139,14 +132,11 @@ public class KMP {
 
         for(int i = 0; i < text.size(); i++){
             String ligne = text.get(i);
-
             ArrayList<Couple> positions_succes = new ArrayList<>();
 
             for(int position_texte = 0; position_texte < (ligne.length() - regex.length() + 1); position_texte++){
                 boolean match = true;
-                //System.out.print("\nposition texte : " + position_texte + " /// ");
                 for(int position_regex = 0; position_regex < regex.length(); position_regex++){
-                    //System.out.print(position_regex + " ");
                     if(regex.charAt(position_regex) != ligne.charAt(position_texte + position_regex)){
                         position_texte = (position_texte + position_regex) - carryover[position_regex] - 1;
                         match = false;
@@ -156,7 +146,6 @@ public class KMP {
                 if(match) positions_succes.add(new Couple(position_texte, position_texte + regex.length()));
 
             }
-
             if(positions_succes.size() > 0) result.put(i, positions_succes);
         }
 

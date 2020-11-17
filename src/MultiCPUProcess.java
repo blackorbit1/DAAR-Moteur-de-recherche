@@ -4,6 +4,7 @@ import java.util.HashMap;
 public class MultiCPUProcess extends Thread {
     private ArrayList<String> texte;
     private int choice;
+    private boolean kmp;
 
     HashMap<Integer, ArrayList<ArrayList<Integer>>> dfa;
 
@@ -22,18 +23,17 @@ public class MultiCPUProcess extends Thread {
         return resultat_lignes_pos;
     }
 
-    MultiCPUProcess (ThreadGroup tg, String name, ArrayList<String> texte, int choice, HashMap<Integer, ArrayList<ArrayList<Integer>>> dfa) {
+    MultiCPUProcess(ThreadGroup tg, String name, ArrayList<String> texte, int choice, HashMap<Integer, ArrayList<ArrayList<Integer>>> dfa, boolean kmp) {
         super(tg,name);
 
         this.texte = texte;
         this.choice = choice;
+        this.kmp = kmp;
 
         this.dfa = dfa;
     }
     public void run() {
-        //String regex = "mama";
-        String regex = KMP.getRegexFromDFA(dfa);
-        System.out.println("regex : " + regex);
+        String regex = kmp?KMP.getRegexFromDFA(dfa):null;
         if(regex != null){
             int [] kmp = KMP.getCarryOver(regex);
             if(choice == 1) resultat_bool = KMP.contient(regex, kmp, texte);

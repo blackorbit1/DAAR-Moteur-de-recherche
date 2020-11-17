@@ -143,16 +143,12 @@ public class Containsdfa {
 		
     private ArrayList<Couple> checkLigneWithPos(char[] ligne, Integer etatCo, int debut, int actu) {
     	ArrayList<Couple> res = new ArrayList<>();
-    	//System.out.println(debut+" "+actu+" "+isChecked.length);
     	if(isChecked[debut][actu]) {
     		return res;
     	}
     	isChecked[debut][actu] = true;
-    	//int cpt0 = cpt++;
 		ArrayList<ArrayList<Integer>> courant = dfaInterne.get(etatCo);
     	boolean cf = courant.get(258).get(0) == 1;
-    	//System.out.println(ligne.length+" "+etatCo+" "+debut+" "+actu+" "+cf);
-    	//System.out.println("\t\t"+cpt0);
     	if(cf) {
     		res.add(new Couple(debut,actu));
     		return res;
@@ -174,25 +170,12 @@ public class Containsdfa {
 			for(Integer in : courant.get(259))
 				res.addAll(checkLigneWithPos(Arrays.copyOfRange(ligne, 1, lens), in, debut, actu+1));
 		}
-    	//System.out.println("\t\t"+cpt0);
 		res.addAll(checkLigneWithPos(Arrays.copyOfRange(ligne, 1, lens), etatI, actu+1, actu+1));
-    	//System.out.println("\t\t"+cpt0);
 
 		return res;
 		
     }	
-    /*
-    private ArrayList<Couple> removeDuplicates(ArrayList<Couple> points) {
-	    ArrayList<Couple> result = (ArrayList<Couple>)points.clone();
-	    for (int i=0;i<result.size();i++) {
-	      for (int j=i+1;j<result.size();j++) if (result.get(i).equals(result.get(j))) {
-	        result.remove(j);
-	        j--;
-	      }
-	    }
-	    return result;
-	  }
-    */
+
     public String cWL_toString(ArrayList<String> in) {
     	StringBuffer sb = new StringBuffer();
     	
