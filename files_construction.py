@@ -1,5 +1,3 @@
-import os
-
 NOM_FICHIER = "merged5.txt"
 DOSSIER_TESTS = "tests/"
 NOM_TESTS = "test"

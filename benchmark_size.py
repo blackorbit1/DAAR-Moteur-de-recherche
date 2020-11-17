@@ -1,16 +1,12 @@
-import datetime
 import os
 import pathlib
 import time
 import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-import numpy as np
-import re
+
 
 import collections
 
 DOSSIER_TESTS = "tests/"
-#REGEX_A_TESTER = ["account", "the", "whithdz", "whitwhi", "amamo", "'a|bc*'", "'wh(at.*|o)'"]
 REGEX_A_TESTER = "'wh(at.*|o)'"
 NB_TESTS = 1
 
@@ -22,7 +18,6 @@ egrep_total_time = []
 files = dict()
 for p in pathlib.Path(DOSSIER_TESTS).iterdir():
     if p.is_file():
-        #file = open(p)
         path = str(p.absolute())
         files[os.path.getsize(path)] = path
 
@@ -66,13 +61,12 @@ for i in range(50000, 5050000, 50000):
 
 
 
-# plot the 3 sets
+# plot des 3 sets
 plt.plot(x,ours_simple_total_time,label='Simple')
 plt.plot(x,ours_kmp_total_time, label='Simple + KMP')
 plt.plot(x,ours_kmp_multi_total_time, label='Simple + KMP + Multi-coeur')
 plt.plot(x,egrep_total_time, label='egrep')
 
-# call with no parameters
 plt.legend()
 
 plt.savefig('test_size4.svg')
