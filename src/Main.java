@@ -128,10 +128,6 @@ public class Main {
 		boolean MULTI_CPU = parsedArgs[5] == 1;
         boolean KMP = parsedArgs[6] == 1;
 
-
-        System.err.println("multi : " + MULTI_CPU);
-        //precisionLvl = 3;
-        System.err.println("precisionlvl : " + precisionLvl);
 		
 		if(verbose) {
             System.out.println("\n=== === === 1e etape === === ===");
