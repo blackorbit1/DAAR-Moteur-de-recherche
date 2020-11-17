@@ -15,13 +15,15 @@ public class Main {
     static final int PARENTHESEFERMANT = 0x51515151;
     static final int DOT = 0xD07;
 
-    // par defaut, utilise 2 arguments : regex et string, cherche
+    // Par defaut, requiert 2 arguments : regex et string, cherche
     // si la string contient la regex, renvoie true/false ou 1/0 pour bash
 
-    // options : -f pour lire un fichier
+    // options :
+    // -f pour lire un fichier
     // -v pour afficher toutes les etapes
     // -pX pour la precision, x dans {1,2,3}
     // -m pour multiCPU
+    // -k pour KMP
 
     // la seule condition d'utilisation est que la regex doit se situer avant le texte/fichier a lire
 
